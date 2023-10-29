@@ -6,7 +6,7 @@ using ZapiHan.Extensions;
 
 namespace AirHockey
 {
-	public enum EPaddleKind
+	public enum EPaddleActor
 	{
 		Player,
 		Enemy
@@ -15,7 +15,7 @@ namespace AirHockey
 	public partial class Paddle : MonoBehaviour
 	{
 		[SerializeField]
-		EPaddleKind paddleKind;
+		EPaddleActor paddleKind;
 
 		new Rigidbody rigidbody;
 		new SphereCollider collider;
@@ -23,8 +23,7 @@ namespace AirHockey
 
 		//
 
-		public EPaddleKind PaddleKind => paddleKind;
-		Vector3? targetPoint;
+		public EPaddleActor PaddleKind => paddleKind;
 		
 		//
 
@@ -51,14 +50,22 @@ namespace AirHockey
 				r.transform.localScale = new Vector3(2 * radius, 1, 2 * radius);
 		}
 
-		
-
 		void Update()
 		{
 			UpdateAI();
 		}
 
 		//
+
+		public Vector3 Position
+		{
+			set
+			{
+				rigidbody.position = value;
+				rigidbody.velocity = Vector3.zero;
+				rigidbody.angularVelocity = Vector3.zero;
+			}
+		}
 
 		public float Radius
 		{
@@ -71,7 +78,7 @@ namespace AirHockey
 			{
 				Bounds b;
 
-				if (PaddleKind == EPaddleKind.Player)
+				if (PaddleKind == EPaddleActor.Player)
 					b = AirHockeyGame.Instance.levelSettings.playerArea.bounds;
 				else
 					b = AirHockeyGame.Instance.levelSettings.enemyArea.bounds;
@@ -94,7 +101,7 @@ namespace AirHockey
 		{
 			get
 			{
-				if (PaddleKind == EPaddleKind.Player)
+				if (PaddleKind == EPaddleActor.Player)
 					return AirHockeyGame.Instance.levelSettings.playerGate;
 				else
 					return AirHockeyGame.Instance.levelSettings.enemyGate;
@@ -105,7 +112,7 @@ namespace AirHockey
 		{
 			get
 			{
-				if (PaddleKind == EPaddleKind.Enemy)
+				if (PaddleKind == EPaddleActor.Enemy)
 					return AirHockeyGame.Instance.levelSettings.playerGate;
 				else
 					return AirHockeyGame.Instance.levelSettings.enemyGate;
@@ -113,30 +120,6 @@ namespace AirHockey
 		}
 
 		//
-
-		public Vector3 Position
-		{
-			set
-			{
-				//transform.position = value;
-				rigidbody.position = value;
-				rigidbody.velocity = Vector3.zero;
-				rigidbody.angularVelocity = Vector3.zero;
-			}
-		}
-
-		bool IsTargetHold { get; set; } = false;
-
-		public Vector3? TargetPoint { 
-			get => targetPoint;
-			set
-			{
-				if (value != null)
-					targetPoint = value.Value; // SafePoint(value.Value);
-				else
-					targetPoint = null;
-			}
-		}
 
 		Vector3 SafePoint(Vector3 p)
 		{
@@ -148,7 +131,6 @@ namespace AirHockey
 
 			return p;
 		}
-
 		
 	}
 }

@@ -4,16 +4,17 @@ using ZapiHan.Helpers;
 
 namespace AirHockey
 {
-	public partial class Paddle
-	{	
-		enum AIState
-		{
-			Defense,
-			Between,
-			Behind,
-			Hit
-		}
+	public enum EPaddleAIState
+	{
+		None,
+		Defense,
+		Between,
+		Behind,
+		Hit,
+	}
 
+	public partial class Paddle
+	{
 		struct AIData
 		{
 			public float angle;
@@ -28,10 +29,13 @@ namespace AirHockey
 			public Vector3 pMineGate;
 			public Vector3 pPuck;
 			public Vector3 pPaddle;
-		}
 
+			public EPaddleAIState state;
+		}
+		
 		AIData ai;
 		
+		//
 
 		bool IsAIEnabled()
 		{
@@ -43,7 +47,7 @@ namespace AirHockey
 			if (game.RoundDelay > 0)
 				return false;
 
-			return PaddleKind == EPaddleKind.Enemy;
+			return PaddleKind == EPaddleActor.Enemy;
 		}
 
 		void InitAI()
@@ -59,39 +63,25 @@ namespace AirHockey
 			if (!ai.timer.TimeToUpdate())
 				return;
 
-			var puck = AirHockeyGame.Instance.puck;
-			bool isOffense = FieldSideBounds.Contains(puck.Position);
+			// collect geometry data
+			UpdateAIData();
 
-			if (isOffense)
-			{
-				UpdateOffenseTactics();
-			}
+			if (DefendGate())
+				ai.state = EPaddleAIState.Defense;
+			else if (TakePointBetweenPuckAndGate())
+				ai.state = EPaddleAIState.Between;
+			else if (TakePointBehindPuck())
+				ai.state = EPaddleAIState.Behind;
+			else if (HitPuck())
+				ai.state = EPaddleAIState.Hit;
 			else
-			{
-				UpdateDefenseTactics();
-			}
-		}
-
-		void UpdateDefenseTactics()
-		{
-			var pMyGate = DefenseGate.position;
-			var pPuddle = AirHockeyGame.Instance.puck.transform.position;
-			
-			var toPuddle = (pPuddle - pMyGate).normalized;
-
-			var pProtectPoint = pMyGate + toPuddle * 15;
-
-			TargetPoint = pProtectPoint;
+				ai.state = EPaddleAIState.None;
 		}
 
 		//
 
-		void UpdateOffenseTactics()
+		void UpdateAIData()
 		{
-			// collect geometry data
-
-			var puck = AirHockeyGame.Instance.puck;
-
 			ai.pEnemyGate = OffenseGate.position.ToXZ();
 			ai.pMineGate = DefenseGate.position.ToXZ();
 
@@ -101,25 +91,33 @@ namespace AirHockey
 			ai.dPuckToGate = ai.pEnemyGate - ai.pPuck;
 			ai.dPuckToGate = ai.dPuckToGate.ToNormalizedXZ(out ai.mPuckToGate);
 
-			ai.dPaddleToGate = ai.pEnemyGate - ai.pPaddle;			
+			ai.dPaddleToGate = ai.pEnemyGate - ai.pPaddle;
 			ai.dPaddleToGate = ai.dPaddleToGate.ToNormalizedXZ(out ai.mPaddleToGate);
 
 			ai.angle = Vector3.Angle(ai.dPuckToGate, ai.dPaddleToGate);
-
-			bool isDirectLineToGate = ai.angle < 5;
-			bool isPaddleInFrontOfPuck = ai.mPaddleToGate < ai.mPuckToGate;
-
-			// ai state machine
-
-			if (TakePointBetweenPuckAndGate()) { }
-			else if (TakePointBehindPuck()) { }
-			else 
-			{
-				HitPuck();
-			}
 		}
 
 		// state machine
+
+		bool DefendGate()
+		{
+			var puck = AirHockeyGame.Instance.puck;
+			bool isOffense = FieldSideBounds.Contains(puck.Position);
+
+			if (isOffense)
+				return false;
+
+			var pMyGate = DefenseGate.position;
+			var pPuddle = AirHockeyGame.Instance.puck.transform.position;
+
+			var toPuddle = (pPuddle - pMyGate).normalized;
+
+			var pProtectPoint = pMyGate + toPuddle * 15;
+
+			TargetPoint = pProtectPoint;
+
+			return true;
+		}
 
 		bool TakePointBetweenPuckAndGate()
 		{

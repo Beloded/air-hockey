@@ -7,8 +7,8 @@ using UnityEngine;
 
 namespace AirHockey
 {
-	//public class Wall : MonoBehaviour
-	//{
-	//	public Collider collider;
-	//}
+	public class Wall : MonoBehaviour
+	{
+
+	}
 }

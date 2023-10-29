@@ -6,24 +6,12 @@ namespace AirHockey
 {
 	public partial class AirHockeyGame
 	{
-		SyncTimer syncTimer = new SyncTimer(0.1f, ESyncMode.Fixed);
+		SyncTimer goalCheckTimer = new SyncTimer(0.1f, ESyncMode.Fixed);
 
-		void UpdateTimers()
+		//
+
+		void CheckGoal()
 		{
-			if (inputDelay > 0)
-			{
-				inputDelay = Mathf.Max(0, inputDelay - Time.deltaTime);
-			}
-		}
-
-		void UpdatePhysics()
-		{
-			if (InterfaceMode != EInterfaceMode.Session)
-				return;
-
-			if (!syncTimer.TimeToUpdate())
-				return;
-
 			// check puck position on the game field
 
 			Bounds playerBounds = levelSettings.playerArea.bounds;
@@ -42,9 +30,22 @@ namespace AirHockey
 			var toPlayer = playerGate - puck.Position;
 			var toEnemy = enemyGate - puck.Position;
 
+			//
+
 			bool playerWins = (toPlayer.SqrMagnitudeXZ() > toEnemy.SqrMagnitudeXZ());
 
 			EndRound(playerWins);
+		}
+
+		void UpdatePhysics()
+		{
+			if (InterfaceMode != EInterfaceMode.Session)
+				return;
+
+			if (!goalCheckTimer.TimeToUpdate())
+				return;
+
+			CheckGoal();
 		}
 	}
 }

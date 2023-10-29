@@ -8,7 +8,27 @@ namespace AirHockey
 {
 	public partial class Paddle
 	{
+		bool IsTargetHold { get; set; } = false;
+
 		Vector3 dynamicForce = Vector3.zero;
+		Vector3? targetPoint;
+
+		//
+
+		/// <summary>
+		/// Physics will try to reach the target point
+		/// </summary>
+		public Vector3? TargetPoint
+		{
+			get => targetPoint;
+			set
+			{
+				if (value != null)
+					targetPoint = value.Value;
+				else
+					targetPoint = null;
+			}
+		}
 
 		public void UpdateDynamicInput()
 		{

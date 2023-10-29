@@ -2,7 +2,7 @@
 
 namespace AirHockey
 {
-	public enum EUInputMode
+	public enum EInputMode
 	{
 		TargetPoint,
 		Dynamic,
@@ -10,8 +10,7 @@ namespace AirHockey
 
 	public partial class AirHockeyGame
 	{
-		public EUInputMode inputMode = EUInputMode.Dynamic;
-		const string kFloorLayer = "Floor";
+		public EInputMode InputMode => AirHockeyGameConfig.Default.inputMode;
 
 		//
 
@@ -19,25 +18,31 @@ namespace AirHockey
 		{
 			UpdateMouseInput();
 			UpdateKeyInput();
+			UpdateInputDelay();
 		}
 
-		bool IsInputEnabled()
+		void UpdateInputDelay()
 		{
-			return false;
+			if (inputDelay > 0)
+			{
+				inputDelay = Mathf.Max(0, inputDelay - Time.deltaTime);
+			}
 		}
 
 		void UpdateMouseInput()
 		{
 			if (InterfaceMode != EInterfaceMode.Session || inputDelay > 0)
 			{
-				//playerPaddle.ResetDynamicPhysics();
+				if (InputMode == EInputMode.Dynamic)
+					playerPaddle.ResetDynamicPhysics();
+
 				return;
 			}
 
-			//playerPaddle.UpdateDynamicInput();
-
-			//if (inputMode == EUInputMode.TargetPoint)
-			playerPaddle.UpdateTargetPointInput();
+			if (InputMode == EInputMode.TargetPoint)
+				playerPaddle.UpdateTargetPointInput();
+			else
+				playerPaddle.UpdateDynamicInput();
 		}
 
 		void UpdateKeyInput()

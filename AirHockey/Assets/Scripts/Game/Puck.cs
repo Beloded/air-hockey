@@ -38,7 +38,6 @@ namespace AirHockey
 		private void OnEnable()
 		{
 			rigidbody = GetComponent<Rigidbody>();
-			//collider = GetComponentInChildren<Collider>();
 
 			nonMovementTimer = 0;
 			idleCollider.gameObject.SetActive(false);
@@ -51,11 +50,6 @@ namespace AirHockey
 
 		void UpdateIdleCollider()
 		{
-			//if (wallTimer.TimeToUpdate())
-			//{
-			//	idleCollider.gameObject.SetActive(!idleCollider.gameObject.activeSelf);
-			//}
-
 			if (nonMovementTimer > 0)
 			{
 				nonMovementTimer -= Time.fixedDeltaTime;
@@ -66,20 +60,6 @@ namespace AirHockey
 					idleCollider.gameObject.SetActive(false);
 				}
 			}
-
-			if (false)
-			{
-				if (rigidbody.velocity.MagnitudeXZ() < 0.00001f)
-				{
-					nonMovementTimer += Time.fixedDeltaTime;
-				}
-				else
-				{
-					nonMovementTimer = 0;
-				}
-
-				idleCollider.gameObject.SetActive(nonMovementTimer >= AirHockeyGameConfig.Default.wallJumpTimer);
-			}
 		}
 
 		private void OnCollisionEnter(Collision collision)
@@ -87,9 +67,7 @@ namespace AirHockey
 			if (collision.gameObject.layer != LayerMask.NameToLayer("Wall"))
 				return;
 
-			//nonMovementTimer = 1.0f;
 			idleCollider.gameObject.SetActive(true);
-			//Debug.Log("WALLLSS");
 		}
 
 		private void OnCollisionExit(Collision collision)
@@ -98,7 +76,6 @@ namespace AirHockey
 				return;
 
 			nonMovementTimer = 0.25f;
-			//idleCollider.gameObject.SetActive(false);
 		}
 	}
 }

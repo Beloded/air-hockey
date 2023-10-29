@@ -15,10 +15,10 @@ namespace AirHockey
 	{
 		void FixedUpdate()
 		{
-			//if (paddleKind == EPaddleKind.Player)
-			//	UpdateDynamicPhysics();
-			//else
-			UpdateTargetPhysics();
+			if (AirHockeyGame.Instance.InputMode == EInputMode.Dynamic)
+				UpdateDynamicPhysics();
+			else
+				UpdateTargetPhysics();
 		}
 
 		public void ResetDynamicPhysics()

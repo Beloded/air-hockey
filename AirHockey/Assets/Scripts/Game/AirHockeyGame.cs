@@ -54,6 +54,14 @@ namespace AirHockey
 
 		//
 
+		public EInterfaceMode InterfaceMode
+		{
+			get => AirHockeyUI.Instance.Mode;
+			set { AirHockeyUI.Instance.Mode = value; }
+		}
+
+		//
+
 		protected override void OnEnable()
 		{
 			base.OnEnable();
@@ -73,97 +81,11 @@ namespace AirHockey
 		void Update()
 		{
 			UpdateInput();
-			UpdateTimers();
 		}
 
 		void FixedUpdate()
 		{
 			UpdatePhysics();
-		}
-
-		public EInterfaceMode InterfaceMode
-		{
-			get => AirHockeyUI.Instance.Mode;
-			set { AirHockeyUI.Instance.Mode = value; }
-		}
-
-		public void Restart()
-		{
-			gameTurn = EGameTurn.Start;
-			playerScore = 0;
-			enemyScore = 0;
-
-			isPaused = false;
-			InterfaceMode = EInterfaceMode.Session;
-
-			Time.timeScale = 1;
-
-			NextRound();
-		}
-
-		public bool IsPlayerVictory
-		{
-			get => playerScore >= AirHockeyGameConfig.Default.maxScore;
-		}
-
-		void EndRound(bool isPlayerScore)
-		{
-			if (isPlayerScore)
-			{
-				playerScore += 1;
-				gameTurn = EGameTurn.Enemy;
-			}
-			else
-			{
-				enemyScore += 1;
-				gameTurn = EGameTurn.Player;
-			}
-
-			if (Mathf.Max(playerScore, enemyScore) >= AirHockeyGameConfig.Default.maxScore)
-			{
-				InterfaceMode = EInterfaceMode.FinalScore;
-				Time.timeScale = 0;
-			}
-			else
-			{
-				NextRound();
-			}
-		}
-
-		void NextRound()
-		{
-			playerPaddle.TargetPoint = null;
-			enemyPaddle.TargetPoint = null;
-
-			if (gameTurn == EGameTurn.Start)
-				puck.Position = levelSettings.puckDefault.position;
-			else if (gameTurn == EGameTurn.Player)
-				puck.Position = levelSettings.puckPlayer.position;
-			else if (gameTurn == EGameTurn.Enemy)
-				puck.Position = levelSettings.puckEnemy.position;
-
-			playerPaddle.Position = levelSettings.playerPaddle.position;
-			enemyPaddle.Position = levelSettings.enemyPaddle.position;
-
-			AirHockeyUI.Instance.InGameOverlay.UpdateScore();
-
-			inputDelay = AirHockeyGameConfig.Default.prepareTimer;
-		}
-
-		public void Continue()
-		{
-			isPaused = false;
-			InterfaceMode = EInterfaceMode.Session;
-
-			Time.timeScale = 1;
-		}
-
-		public void Pause()
-		{
-			Time.timeScale = 0; // to hold physics
-
-			isPaused = true;
-			InterfaceMode = EInterfaceMode.MainMenu;
 		}
 	}
 }
