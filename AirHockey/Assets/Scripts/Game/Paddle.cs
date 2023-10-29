@@ -6,7 +6,7 @@ using ZapiHan.Extensions;
 
 namespace AirHockey
 {
-	public enum EPaddleActor
+	public enum EActor
 	{
 		Player,
 		Enemy
@@ -15,7 +15,7 @@ namespace AirHockey
 	public partial class Paddle : MonoBehaviour
 	{
 		[SerializeField]
-		EPaddleActor paddleKind;
+		EActor actor;
 
 		new Rigidbody rigidbody;
 		new SphereCollider collider;
@@ -23,7 +23,7 @@ namespace AirHockey
 
 		//
 
-		public EPaddleActor PaddleKind => paddleKind;
+		public EActor PaddleKind => actor;
 		
 		//
 
@@ -78,7 +78,7 @@ namespace AirHockey
 			{
 				Bounds b;
 
-				if (PaddleKind == EPaddleActor.Player)
+				if (PaddleKind == EActor.Player)
 					b = AirHockeyGame.Instance.levelSettings.playerArea.bounds;
 				else
 					b = AirHockeyGame.Instance.levelSettings.enemyArea.bounds;
@@ -101,7 +101,7 @@ namespace AirHockey
 		{
 			get
 			{
-				if (PaddleKind == EPaddleActor.Player)
+				if (PaddleKind == EActor.Player)
 					return AirHockeyGame.Instance.levelSettings.playerGate;
 				else
 					return AirHockeyGame.Instance.levelSettings.enemyGate;
@@ -112,7 +112,7 @@ namespace AirHockey
 		{
 			get
 			{
-				if (PaddleKind == EPaddleActor.Enemy)
+				if (PaddleKind == EActor.Enemy)
 					return AirHockeyGame.Instance.levelSettings.playerGate;
 				else
 					return AirHockeyGame.Instance.levelSettings.enemyGate;

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 208b9df00b4677841bd3a8c361886ec1, type: 3}
   m_Name: Config
   m_EditorClassIdentifier: 
-  velocityToDistance:
+  playerVelocityToDistance:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
@@ -45,7 +45,32 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  enemyVelocityToDistance:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 70
+      inSlope: 0.2
+      outSlope: 0.2
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 50
+      value: 80
+      inSlope: 0.2
+      outSlope: 0.2
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   dynamicForce: 70
+  inputMode: 0
   prepareTimer: 2
   maxScore: 5
   paddleRadius: 8

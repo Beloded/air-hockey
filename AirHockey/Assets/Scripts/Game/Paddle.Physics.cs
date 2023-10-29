@@ -53,6 +53,14 @@ namespace AirHockey
 			}
 		}
 
+		float GetVelocity(float mDelta)
+		{
+			if (actor == EActor.Player) 
+				return AirHockeyGameConfig.Default.playerVelocityToDistance.Evaluate(mDelta);
+			else
+				return AirHockeyGameConfig.Default.enemyVelocityToDistance.Evaluate(mDelta);
+		}
+
 		void UpdateTargetPhysics()
 		{
 			if (TargetPoint == null || IsTargetHold)
@@ -69,7 +77,7 @@ namespace AirHockey
 
 			float mDelta;
 			Vector3 pDelta = (pTarget - pCurrent).ToNormalizedXZ(out mDelta);
-			float vTarget = AirHockeyGameConfig.Default.velocityToDistance.Evaluate(mDelta);
+			float vTarget = GetVelocity(mDelta);
 
 			// clamp new point into area bounds
 
@@ -84,7 +92,7 @@ namespace AirHockey
 				pTarget = bounds.ClosestPoint(pTarget);
 
 				pDelta = (pTarget - pCurrent).ToNormalizedXZ(out mDelta);
-				vTarget = AirHockeyGameConfig.Default.velocityToDistance.Evaluate(mDelta);
+				vTarget = GetVelocity(mDelta);
 				newVelocity = pDelta * vTarget;
 			}
 

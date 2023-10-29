@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace AirHockey
 {
 	[CreateAssetMenu(fileName = "Air Hockey Config", menuName = "Air Hockey/Config")]
 	public class AirHockeyGameConfig : ScriptableObject
 	{
-		public AnimationCurve velocityToDistance;
+		[FormerlySerializedAs("velocityToDistance")]
+		public AnimationCurve playerVelocityToDistance;
+		public AnimationCurve enemyVelocityToDistance;
 		public float dynamicForce = 30;
 		public EInputMode inputMode = EInputMode.TargetPoint;
 

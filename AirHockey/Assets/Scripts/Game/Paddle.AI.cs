@@ -11,6 +11,7 @@ namespace AirHockey
 		Between,
 		Behind,
 		Hit,
+		Return,
 	}
 
 	public partial class Paddle
@@ -47,7 +48,7 @@ namespace AirHockey
 			if (game.RoundDelay > 0)
 				return false;
 
-			return PaddleKind == EPaddleActor.Enemy;
+			return PaddleKind == EActor.Enemy;
 		}
 
 		void InitAI()
@@ -68,6 +69,8 @@ namespace AirHockey
 
 			if (DefendGate())
 				ai.state = EPaddleAIState.Defense;
+			else if (ReturnToGate())
+				ai.state = EPaddleAIState.Return;
 			else if (TakePointBetweenPuckAndGate())
 				ai.state = EPaddleAIState.Between;
 			else if (TakePointBehindPuck())
@@ -76,6 +79,8 @@ namespace AirHockey
 				ai.state = EPaddleAIState.Hit;
 			else
 				ai.state = EPaddleAIState.None;
+
+			//Debug.Log(ai.state);
 		}
 
 		//
@@ -119,6 +124,23 @@ namespace AirHockey
 			return true;
 		}
 
+		bool ReturnToGate()
+		{
+			bool isDirectLineToGate = ai.angle < 5;
+			bool isPaddleInFrontOfPuck = ai.mPaddleToGate < ai.mPuckToGate;
+
+			bool condition = (isPaddleInFrontOfPuck && isDirectLineToGate);
+
+			if (!condition)
+				return false;
+
+			var puck = AirHockeyGame.Instance.puck;
+
+			TargetPoint = DefenseGate.position;
+
+			return true;
+		}
+
 		bool TakePointBetweenPuckAndGate()
 		{
 			bool isDirectLineToGate = ai.angle < 5;
@@ -153,7 +175,9 @@ namespace AirHockey
 		{
 			var puck = AirHockeyGame.Instance.puck;
 
-			TargetPoint = ai.pPuck - ai.dPaddleToGate * 0.1f * puck.Radius;
+			//TargetPoint = ai.pPuck - ai.dPaddleToGate * 0.1f * puck.Radius;
+
+			TargetPoint = ai.pPuck + ai.dPaddleToGate * 0.5f * puck.Radius;
 
 			return true;
 		}
