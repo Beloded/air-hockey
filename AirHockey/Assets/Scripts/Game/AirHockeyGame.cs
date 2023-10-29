@@ -65,7 +65,7 @@ namespace AirHockey
 			else
 				InterfaceMode = EInterfaceMode.MainMenu;
 
-			Cursor.visible = false;
+			//Cursor.visible = false;
 		}
 
 		//
