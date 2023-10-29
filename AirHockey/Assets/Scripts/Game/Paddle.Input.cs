@@ -1,0 +1,41 @@
+﻿using System;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.Assertions.Must;
+using ZapiHan.Extensions;
+
+namespace AirHockey
+{
+	public partial class Paddle
+	{
+		Vector3 dynamicForce = Vector3.zero;
+
+		public void UpdateDynamicInput()
+		{
+			if (AirHockeyGame.Instance.InterfaceMode != EInterfaceMode.Session)
+				return;
+
+			float f = AirHockeyGameConfig.Default.dynamicForce;
+			float vX = Input.GetAxis("Mouse X") * f;
+			float vZ = Input.GetAxis("Mouse Y") * f;
+
+			dynamicForce = new Vector3 (vX, 0, vZ);
+		}
+
+		public void UpdateTargetPointInput()
+		{
+			Vector3? mousePoint = null;
+			Vector3 point = Input.mousePosition;
+			var ray = Camera.main.ScreenPointToRay(point);
+
+			RaycastHit hit;
+			if (Physics.Raycast(ray, out hit, float.MaxValue, 1 << LayerMask.NameToLayer("Floor")))
+			{
+				mousePoint = hit.point;
+			}
+
+			TargetPoint = mousePoint;
+			IsTargetHold = Input.GetMouseButton(0);
+		}
+	}
+}
